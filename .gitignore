@@ -1,0 +1,21 @@
+# Rust
+/target
+**/target
+**/*.rs.bk
+
+# Tauri example build output
+examples/tauri-app/src-tauri/target
+examples/tauri-app/src-tauri/gen
+
+# Local configuration created by `kiosk init`
+kiosk.toml
+
+# Distribution output
+/dist
+
+# Editors / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+PLAN.md

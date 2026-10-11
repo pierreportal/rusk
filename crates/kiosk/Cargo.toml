@@ -1,0 +1,18 @@
+[package]
+name = "kiosk"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Rust Kiosk (Rusk) CLI — configure, install, and supervise a single-purpose kiosk"
+default-run = "kiosk"
+
+[[bin]]
+name = "kiosk"
+path = "src/main.rs"
+
+[dependencies]
+clap.workspace = true
+serde.workspace = true
+thiserror.workspace = true
+toml.workspace = true

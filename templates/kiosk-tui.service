@@ -1,0 +1,42 @@
+# Rusk TUI application session.
+#
+# TEMPLATE — deployed by `kiosk install` (Phase 2/4) when ui = "tui".
+#
+# A TUI application is a full-screen terminal program (ratatui/crossterm). It
+# runs directly on a Linux virtual console: there is no compositor, no seat,
+# and no WebKitGTK. This unit must NOT pull in Cage.
+#
+# Placeholders:
+#   @@KIOSK_USER@@ unprivileged user that runs the application
+#   @@TTY@@        console TTY to claim (default tty1)
+#   @@TERM@@       value for the TERM environment variable (default linux)
+#   @@WORKDIR@@    application working directory
+#   @@APP_BIN@@    absolute path to the application executable
+[Unit]
+Description=Rusk terminal (TUI) kiosk application
+After=systemd-user-sessions.service
+Wants=systemd-user-sessions.service
+# Claim the TTY exclusively so a login prompt cannot run on top of the TUI.
+Conflicts=getty@@TTY@@.service
+
+[Service]
+Type=simple
+User=@@KIOSK_USER@@
+WorkingDirectory=@@WORKDIR@@
+TTYPath=/dev/@@TTY@@
+StandardInput=tty
+StandardOutput=tty
+StandardError=journal
+TTYReset=yes
+TTYVHangup=yes
+Environment=TERM=@@TERM@@
+ExecStart=@@APP_BIN@@
+
+# Recover from ordinary crashes without looping forever.
+Restart=on-failure
+RestartSec=2
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Install]
+WantedBy=multi-user.target

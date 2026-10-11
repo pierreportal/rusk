@@ -1,0 +1,56 @@
+# Rusk example configuration.
+#
+# Initial schema (schema_version = 1). Every field is documented in
+# docs/configuration.md as it is implemented. Not every field is honored by the
+# Phase 1 reference platform; `width`/`height` in particular are hints, not
+# guarantees, until display capabilities are inspected.
+#
+# The `ui` field selects the runtime adapter:
+#   "gui"       Wayland via Cage + a webview/GPU client (Tauri, winit, SDL)
+#   "tui"       full-screen terminal program on a Linux virtual console
+#   "headless"  no display at all; a plain systemd service
+# This example configures a GUI kiosk. See kiosk.tui.example.toml for a TUI.
+
+schema_version = 1
+
+[kiosk]
+name = "my-kiosk"
+ui = "gui"
+# Compositor backend. Only meaningful when ui = "gui". "cage" is the only
+# supported value today.
+backend = "cage"
+fullscreen = true
+# One of: "always", "on-failure", "never".
+restart_policy = "always"
+restart_delay_seconds = 2
+
+[application]
+name = "my-app"
+# Absolute path to the executable. When releases are used, point at the
+# stable symlink rather than a versioned directory.
+command = "/opt/kiosk/releases/initial/bin/my-app"
+working_directory = "/opt/kiosk"
+arguments = []
+environment = {}
+
+# GUI only.
+[display]
+disable_screen_blanking = true
+# Optional hints. The runtime must inspect the connected display before
+# applying a mode.
+width = 800
+height = 480
+
+# TUI only. A TUI application runs directly on a Linux virtual console with no
+# compositor; `term` selects the TERM value the console is described as.
+[terminal]
+tty = "tty1"
+term = "linux"
+disable_screen_blanking = true
+
+[network]
+ssh_enabled = true
+
+[deployment]
+release_directory = "/opt/kiosk/releases"
+keep_releases = 3

@@ -1,0 +1,23 @@
+[package]
+name = "rusk-tui-example"
+version = "0.1.0"
+edition = "2021"
+description = "Minimal ratatui TUI application used as the Rusk terminal reference app"
+license = "MIT"
+publish = false
+
+# Detach from the repository workspace: examples build independently.
+[workspace]
+
+[[bin]]
+name = "rusk-tui-example"
+path = "src/main.rs"
+
+[dependencies]
+ratatui = "0.29"
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "s"
+strip = true

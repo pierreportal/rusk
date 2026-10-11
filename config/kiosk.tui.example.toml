@@ -1,0 +1,37 @@
+# Rusk example configuration for a TUI (terminal) kiosk.
+#
+# A TUI kiosk needs no desktop environment, no compositor, and no WebKitGTK.
+# The application renders with terminal graphics (for example ratatui +
+# crossterm) directly on a Linux virtual console.
+#
+# Compare with kiosk.example.toml, which configures a GUI kiosk.
+
+schema_version = 1
+
+[kiosk]
+name = "my-tui-kiosk"
+ui = "tui"
+fullscreen = true
+restart_policy = "always"
+restart_delay_seconds = 2
+
+[application]
+name = "my-tui-app"
+command = "/opt/kiosk/releases/initial/bin/my-tui-app"
+working_directory = "/opt/kiosk"
+arguments = []
+environment = {}
+
+# TUI only. The runtime claims this TTY and sets TERM accordingly; no
+# compositor is started.
+[terminal]
+tty = "tty1"
+term = "linux"
+disable_screen_blanking = true
+
+[network]
+ssh_enabled = true
+
+[deployment]
+release_directory = "/opt/kiosk/releases"
+keep_releases = 3

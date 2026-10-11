@@ -1,0 +1,28 @@
+# Rusk headless application service.
+#
+# TEMPLATE — used for the headless runtime type (Phase 4). It does not install
+# or start a graphical environment; the application is supervised directly.
+#
+# Placeholders:
+#   @@KIOSK_USER@@ unprivileged user that runs the application
+#   @@WORKDIR@@    application working directory
+#   @@APP_BIN@@    absolute path to the application executable
+[Unit]
+Description=Rusk headless application
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=@@KIOSK_USER@@
+WorkingDirectory=@@WORKDIR@@
+ExecStart=@@APP_BIN@@
+Restart=on-failure
+RestartSec=2
+StartLimitIntervalSec=60
+StartLimitBurst=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

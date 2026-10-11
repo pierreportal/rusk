@@ -1,0 +1,41 @@
+# Rusk graphical kiosk session.
+#
+# TEMPLATE — deployed by `kiosk install` in Phase 2. Placeholders:
+#   @@KIOSK_USER@@  unprivileged user that owns the session
+#   @@SESSION_BIN@@ absolute path to the session launcher
+#                   (e.g. /opt/kiosk/bin/kiosk-session.sh)
+#   @@TTY@@         console TTY to claim (default tty1)
+#
+# Modeled on the documented Cage systemd setup: a local TTY plus PAMName=login
+# gives the compositor a logind seat, which it needs to access the display and
+# input devices.
+[Unit]
+Description=Rusk graphical kiosk session
+Documentation=man:cage(1)
+After=systemd-user-sessions.service
+Wants=systemd-user-sessions.service
+Conflicts=getty@@TTY@@.service
+
+[Service]
+Type=simple
+User=@@KIOSK_USER@@
+PAMName=login
+TTYPath=/dev/@@TTY@@
+StandardInput=tty
+StandardOutput=journal
+StandardError=journal
+UtmpIdentifier=@@TTY@@
+TTYReset=yes
+TTYVHangup=yes
+Environment=XDG_SESSION_TYPE=wayland
+ExecStart=@@SESSION_BIN@@
+
+# Recover from ordinary crashes, but bound the retries so a permanently broken
+# application reaches a failed state instead of looping forever.
+Restart=on-failure
+RestartSec=2
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Install]
+WantedBy=graphical.target
